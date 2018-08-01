@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        input {
+            outline: none;
+            padding: 0;
+        }
+
+        .waper {
+            width: 504px;
+            margin: 80px auto 20px auto;
+            height: 35px;
+        }
+
+        .inp {
+            width: 380px;
+            height: 31px;
+            float: left;
+            padding: 0 10px;
+        }
+
+        .btn {
+            width: 100px;
+            height: 35px;
+            float: left;
+        }
+
+        .result {
+            width: 504px;
+            margin: 0 auto;
+        }
+
+        .result li {
+            padding: 10px;
+            border-top: 1px dashed #707070;
+        }
+
+        .noResult {
+            width: 504px;
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .clear {
+            width: 504px;
+            margin: 0 auto;
+            text-align: right;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="waper">
+        <input type="text" class="inp" placeholder="请输入搜索关键字..." id="inp">
+        <input type="button" class="btn" value="搜索" id="btn">
+    </div>
+    <div class="clear">
+        <a href="javascript:;" id="clearBtn">清空历史关键字</a>
+    </div>
+    <ul class="result" id="result"></ul>
+    <div class="noResult" id="noResult">没有搜索历史关键字</div>
+
+    <script>
+        // 为搜索框注册点击事件
+        // 获取搜索框内容
+        // 清空搜索框
+        // 显示历史关键字,并清除提示内容
+        // 本地保存搜索内容值
+        // 刷新页面后,读取本地存储,显示历史关键字
+        // 清空功能注册点击事件,提醒是否清空历史关键字,是,清空关键字
+
+        var inp = document.querySelector("#inp");
+        var btn = document.querySelector("#btn");
+        var result = document.querySelector("#result");
+        var noResult = document.querySelector("#noResult");
+        var clearBtn = document.querySelector("#clearBtn");
+
+
+        var arr = [];
+
+        btn.onclick = function () {
+            // 要保证输入框内容不为空,为空时,提醒输入不得为空,并且下面代码不再执行
+            if (inp.value.trim().length == 0) {
+                alert("输入内容不能为空,请重新输入!");
+                // 如果有空格的情况下,需要清空,才能显示占位符
+                inp.value = "";
+                return;
+            }
+
+            var content = inp.value;
+            // 保存多个数据,使用数组
+            arr.push(content);
+            // 循环创建历史记录
+            var str = "";
+            for (var i = 0, len = arr.length; i < len; i++) {
+                str += "<li>" + arr[i] + "</li>";
+            }
+            result.innerHTML = str;
+            // 本地存储localStorage,只能存储字符串
+            localStorage.setItem("history", JSON.stringify(arr));
+            inp.value = "";
+            // 清空历史关键字提醒
+            noResult.innerHTML = "";
+        }
+        // 刷新页面后,需要读取本地数据
+        // 字符串需要转化,变成数组
+        // 不能直接将本地数据转化成数组,因为有可能刷新时本地存储为空,此时转化的数据为null
+        var json_arr = [];
+        if (localStorage.getItem("history") != null) {
+            json_arr = JSON.parse(localStorage.getItem("history"));
+            // 点击事件中的arr也要获取本地数据,否则在刷新之后,arr为空,点击事件发生,本地存储以及页面显示的历史记录会被清空
+            // 不能直接将json_arr赋值给arr,否则arr指向json_arr数组
+            arr = JSON.parse(localStorage.getItem("history"));
+            // 当有本地数据时,历史关键字提醒清空,
+            // 当刷新页面时没有本地数据时,历史关键字显示
+            noResult.innerHTML = "";
+        }
+
+        var str = "";
+        for (var i = 0, len = json_arr.length; i < len; i++) {
+            str += "<li>" + json_arr[i] + "</li>";
+        }
+        result.innerHTML = str;
+        
+
+
+        // 请空功能
+        clearBtn.onclick = function () {
+            // 清空本地存储
+            localStorage.removeItem("history");
+            // 清空页面历史记录
+            result.innerHTML = "";
+            // 显示历史关键字提醒
+            noResult.innerText = "没有搜索历史关键字";
+            // 清空数组arr,arr中保存着本地存储数据,搜索点击事件发生,本应删除的本地数据又被渲染到页面上
+            arr = [];
+
+        }
+    </script>
+</body>
+
+</html>
