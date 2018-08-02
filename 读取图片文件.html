@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" id="imgfile">
+    <div id="container"></div>
+    <script>
+        // 读取文件的过程
+            // 1.创建文件读取对象
+            // 2.读取文件
+            // 3.监测文件是否读取完
+            // 4.获取文件
+
+        var imgfile = document.getElementById("imgfile");
+        var container = document.querySelector("#container");
+
+        imgfile.onchange = function () {
+
+            // 获取用户选择的文件列列表
+            var file = this.files[0];
+
+            var reader = new FileReader();
+
+            reader.readAsDataURL(file);
+            
+            reader.onload = function () {
+                console.log(reader.result);
+                var img = document.createElement("img");
+                img.src = reader.result;
+                container.appendChild(img);
+            }
+
+        }
+    </script>
+</body>
+</html>
